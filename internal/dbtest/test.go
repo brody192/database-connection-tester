@@ -8,30 +8,35 @@ import (
 	"time"
 )
 
+type testMeta struct {
+	URL    *url.URL
+	Host   string
+	Scheme string
+}
+
 type testResults struct {
-	Host     string
-	Scheme   string
+	Meta     testMeta
 	Duration time.Duration
 	Err      error
 }
 
-func RunTests(databaseURLs []string) ([]testResults, time.Duration, error) {
-	dburls := []*url.URL{}
+func RunTests(databaseURLs []*url.URL) ([]testResults, time.Duration, error) {
+	// dburls := []*url.URL{}
 
-	for _, db := range databaseURLs {
-		dburl, err := url.Parse(db)
-		if err != nil {
-			return nil, 0, err
-		}
+	// for _, db := range databaseURLs {
+	// 	dburl, err := url.Parse(db)
+	// 	if err != nil {
+	// 		return nil, 0, err
+	// 	}
 
-		dburls = append(dburls, dburl)
-	}
+	// 	dburls = append(dburls, dburl)
+	// }
 
 	sT := time.Now()
 
 	results := []testResults{}
 
-	resultsChan := make(chan testResults, len(dburls))
+	resultsChan := make(chan testResults, len(databaseURLs))
 
 	defer close(resultsChan)
 
@@ -48,9 +53,9 @@ func RunTests(databaseURLs []string) ([]testResults, time.Duration, error) {
 
 	wg := sync.WaitGroup{}
 
-	wg.Add(len(dburls))
+	wg.Add(len(databaseURLs))
 
-	for _, dburl := range dburls {
+	for _, dburl := range databaseURLs {
 		go func(dburl *url.URL) {
 			defer wg.Done()
 
@@ -67,8 +72,11 @@ func RunTests(databaseURLs []string) ([]testResults, time.Duration, error) {
 				result.Err = fmt.Errorf(`scheme "%s" not implemented`, dburl.Scheme)
 			}
 
-			result.Host = dburl.Hostname()
-			result.Scheme = dburl.Scheme
+			result.Meta = testMeta{
+				URL:    dburl,
+				Host:   dburl.Hostname(),
+				Scheme: dburl.Scheme,
+			}
 
 			resultsChan <- result
 			<-ack

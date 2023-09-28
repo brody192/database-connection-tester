@@ -15,7 +15,7 @@ func Redis(redisURL string) (time.Duration, error) {
 	}
 
 	opt.DialTimeout = 10 * time.Second
-	opt.MaxRetries = 500
+	opt.MaxRetries = 20
 	opt.MinRetryBackoff = 10 * time.Millisecond
 
 	sT := time.Now()
