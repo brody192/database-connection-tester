@@ -9,6 +9,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
+
 	"github.com/olekukonko/tablewriter"
 )
 
@@ -36,16 +37,16 @@ func main() {
 	table := tablewriter.NewWriter(os.Stdout)
 
 	table.SetAutoFormatHeaders(false)
-	table.SetHeader([]string{"Host", "Status", "Error", "duration"})
-	table.SetFooter([]string{"", "", "Total", duration.String()})
+	table.SetHeader([]string{"Host", "Scheme", "Status", "Error", "duration"})
+	table.SetFooter([]string{"", "", "", "Total", duration.String()})
 
 	for _, result := range results {
 		if result.Err != nil {
-			table.Append([]string{result.Host, "Error", result.Err.Error(), result.Duration.String()})
+			table.Append([]string{result.Host, result.Scheme, "Error", result.Err.Error(), result.Duration.String()})
 			continue
 		}
 
-		table.Append([]string{result.Host, "Success", "N/A", result.Duration.String()})
+		table.Append([]string{result.Host, result.Scheme, "Success", "N/A", result.Duration.String()})
 	}
 
 	table.Render()

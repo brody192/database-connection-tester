@@ -10,6 +10,7 @@ import (
 
 type testResults struct {
 	Host     string
+	Scheme   string
 	Duration time.Duration
 	Err      error
 }
@@ -67,6 +68,7 @@ func RunTests(databaseURLs []string) ([]testResults, time.Duration, error) {
 			}
 
 			result.Host = dburl.Hostname()
+			result.Scheme = dburl.Scheme
 
 			resultsChan <- result
 			<-ack
