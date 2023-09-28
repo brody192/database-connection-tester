@@ -25,7 +25,7 @@ func Redis(redisURL string) (time.Duration, error) {
 	defer client.Close()
 
 	if err := client.Ping(context.Background()).Err(); err != nil {
-		return 0, fmt.Errorf("client.Ping error: %w", err)
+		return time.Since(sT), fmt.Errorf("client.Ping error: %w", err)
 	}
 
 	return time.Since(sT), nil

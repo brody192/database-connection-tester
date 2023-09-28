@@ -9,6 +9,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
+	"github.com/olekukonko/tablewriter"
 )
 
 func main() {
@@ -24,7 +25,7 @@ func main() {
 		os.Exit(0)
 	}
 
-	fmt.Println("running tests")
+	fmt.Printf("Starting %d Tests... \n\n", len(dbs))
 
 	results, duration, err := dbtest.RunTests(dbs)
 	if err != nil {
@@ -32,14 +33,20 @@ func main() {
 		os.Exit(0)
 	}
 
+	table := tablewriter.NewWriter(os.Stdout)
+
+	table.SetAutoFormatHeaders(false)
+	table.SetHeader([]string{"Host", "Status", "Error", "duration"})
+	table.SetFooter([]string{"", "", "Total", duration.String()})
+
 	for _, result := range results {
 		if result.Err != nil {
-			fmt.Printf("error testing %s: %s\n", result.Host, result.Err)
+			table.Append([]string{result.Host, "Error", result.Err.Error(), result.Duration.String()})
 			continue
 		}
 
-		fmt.Printf("tested %s successfully in %v\n", result.Host, result.Duration)
+		table.Append([]string{result.Host, "Success", "N/A", result.Duration.String()})
 	}
 
-	fmt.Printf("testing finished in %v", duration)
+	table.Render()
 }

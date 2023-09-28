@@ -16,13 +16,13 @@ func Mongo(monoURL string) (time.Duration, error) {
 
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(monoURL))
 	if err != nil {
-		return 0, fmt.Errorf("mongo.Connect error: %w", err)
+		return time.Since(sT), fmt.Errorf("mongo.Connect error: %w", err)
 	}
 
 	defer client.Disconnect(ctx)
 
 	if err := client.Ping(ctx, nil); err != nil {
-		return 0, fmt.Errorf("client.Ping error: %w", err)
+		return time.Since(sT), fmt.Errorf("client.Ping error: %w", err)
 	}
 
 	return time.Since(sT), nil

@@ -63,7 +63,7 @@ func RunTests(databaseURLs []string) ([]testResults, time.Duration, error) {
 			case "mongodb":
 				result.Duration, result.Err = databases.Mongo(dburl.String())
 			default:
-				result.Err = fmt.Errorf("scheme %s not implemented", dburl.Scheme)
+				result.Err = fmt.Errorf(`scheme "%s" not implemented`, dburl.Scheme)
 			}
 
 			result.Host = dburl.Hostname()

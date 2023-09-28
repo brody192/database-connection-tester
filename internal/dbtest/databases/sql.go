@@ -21,13 +21,13 @@ func Sql(driverName, mysqlURL string) (time.Duration, error) {
 
 	db, err := sql.Open(driverName, dsn.DSN)
 	if err != nil {
-		return 0, fmt.Errorf("sql.Open error: %w", err)
+		return time.Since(sT), fmt.Errorf("sql.Open error: %w", err)
 	}
 
 	defer db.Close()
 
 	if err := db.Ping(); err != nil {
-		return 0, fmt.Errorf("db.Ping error: %w", err)
+		return time.Since(sT), fmt.Errorf("db.Ping error: %w", err)
 	}
 
 	return time.Since(sT), nil
