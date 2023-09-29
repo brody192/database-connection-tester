@@ -20,23 +20,12 @@ type testResults struct {
 	Err      error
 }
 
-func RunTests(databaseURLs []*url.URL) ([]testResults, time.Duration, error) {
-	// dburls := []*url.URL{}
-
-	// for _, db := range databaseURLs {
-	// 	dburl, err := url.Parse(db)
-	// 	if err != nil {
-	// 		return nil, 0, err
-	// 	}
-
-	// 	dburls = append(dburls, dburl)
-	// }
-
+func RunTests(databaseURLs []*url.URL) ([]*testResults, time.Duration, error) {
 	sT := time.Now()
 
-	results := []testResults{}
+	results := []*testResults{}
 
-	resultsChan := make(chan testResults, len(databaseURLs))
+	resultsChan := make(chan *testResults, len(databaseURLs))
 
 	defer close(resultsChan)
 
@@ -78,7 +67,7 @@ func RunTests(databaseURLs []*url.URL) ([]testResults, time.Duration, error) {
 				Scheme: dburl.Scheme,
 			}
 
-			resultsChan <- result
+			resultsChan <- &result
 			<-ack
 		}(dburl)
 	}
