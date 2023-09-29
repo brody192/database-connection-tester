@@ -21,8 +21,6 @@ type testResults struct {
 }
 
 func RunTests(databaseURLs []*url.URL) ([]*testResults, time.Duration, error) {
-	sT := time.Now()
-
 	results := []*testResults{}
 
 	resultsChan := make(chan *testResults, len(databaseURLs))
@@ -43,6 +41,8 @@ func RunTests(databaseURLs []*url.URL) ([]*testResults, time.Duration, error) {
 	wg := sync.WaitGroup{}
 
 	wg.Add(len(databaseURLs))
+
+	sT := time.Now()
 
 	for _, dburl := range databaseURLs {
 		go func(dburl *url.URL) {
