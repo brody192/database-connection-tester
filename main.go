@@ -34,7 +34,7 @@ func main() {
 	table := tablewriter.NewWriter(os.Stdout)
 
 	table.SetAutoFormatHeaders(false)
-	table.SetHeader([]string{"ENV", "Host", "Scheme", "Status", "Error", "duration"})
+	table.SetHeader([]string{"ENV", "Host", "Scheme", "Status", "Error", "Duration"})
 	table.SetFooter([]string{"", "", "", "", "Total", duration.String()})
 
 	for _, result := range results {
