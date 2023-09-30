@@ -57,6 +57,8 @@ func RunTests(databaseURLs []*url.URL) ([]*testResults, time.Duration, error) {
 				result.Duration, result.Err = databases.Redis(dburl.String())
 			case "mongodb":
 				result.Duration, result.Err = databases.Mongo(dburl.String())
+			case "edgedb":
+				result.Duration, result.Err = databases.EdgeDB(dburl.String())
 			default:
 				result.Err = fmt.Errorf(`scheme "%s" not implemented`, dburl.Scheme)
 			}
