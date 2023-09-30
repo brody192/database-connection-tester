@@ -17,6 +17,13 @@ func Sql(driverName, mysqlURL string) (time.Duration, error) {
 		return 0, fmt.Errorf("dburl.Parse error: %w", err)
 	}
 
+	query := dsn.Query()
+
+	query.Set("connect_timeout", "10")
+	query.Set("timeout", "10")
+
+	dsn.RawQuery = query.Encode()
+
 	sT := time.Now()
 
 	db, err := sql.Open(driverName, dsn.DSN)

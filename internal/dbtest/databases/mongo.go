@@ -7,6 +7,7 @@ import (
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/x/mongo/driver/topology"
 )
 
 func Mongo(monoURL string) (time.Duration, error) {
@@ -24,6 +25,10 @@ func Mongo(monoURL string) (time.Duration, error) {
 	defer client.Disconnect(ctx)
 
 	if err := client.Ping(ctx, nil); err != nil {
+		if sse, ok := err.(topology.ServerSelectionError); ok && len(sse.Desc.Servers) > 0 {
+			return time.Since(sT), fmt.Errorf("client.Ping error: %w", sse.Desc.Servers[0].LastError)
+		}
+
 		return time.Since(sT), fmt.Errorf("client.Ping error: %w", err)
 	}
 
