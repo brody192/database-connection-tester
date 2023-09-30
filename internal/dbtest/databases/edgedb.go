@@ -21,7 +21,7 @@ func EdgeDB(edgeDbURL string) (time.Duration, error) {
 		},
 	})
 	if err != nil {
-		return 0, err
+		return time.Since(sT), err
 	}
 
 	defer client.Close()
