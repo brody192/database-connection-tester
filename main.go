@@ -39,14 +39,13 @@ func main() {
 
 	for _, result := range results {
 		if result.Err != nil {
-			table.Append(
-				[]string{
-					dbmap[result.Meta.URL],
-					result.Meta.Host, result.Meta.Scheme,
-					"Error",
-					result.Err.Error(),
-					result.Duration.String(),
-				})
+			table.Append([]string{
+				dbmap[result.Meta.URL],
+				result.Meta.Host, result.Meta.Scheme,
+				"Error",
+				result.Err.Error(),
+				result.Duration.String(),
+			})
 			continue
 		}
 
