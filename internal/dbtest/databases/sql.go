@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/avast/retry-go"
 	"github.com/xo/dburl"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -19,8 +20,8 @@ func Sql(driverName, mysqlURL string) (time.Duration, error) {
 
 	query := dsn.Query()
 
-	query.Set("connect_timeout", "10")
-	query.Set("timeout", "10")
+	query.Set("connect_timeout", "3")
+	query.Set("timeout", "3")
 
 	dsn.RawQuery = query.Encode()
 
@@ -33,7 +34,13 @@ func Sql(driverName, mysqlURL string) (time.Duration, error) {
 
 	defer db.Close()
 
-	if err := db.Ping(); err != nil {
+	if err := retry.Do(func() error {
+		return db.Ping()
+	},
+		retry.LastErrorOnly(true),
+		retry.Attempts(3),
+		retry.Delay(10),
+	); err != nil {
 		return time.Since(sT), fmt.Errorf("db.Ping error: %w", err)
 	}
 

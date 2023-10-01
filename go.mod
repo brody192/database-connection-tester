@@ -3,6 +3,7 @@ module main
 go 1.21
 
 require (
+	github.com/avast/retry-go v3.0.0+incompatible
 	github.com/edgedb/edgedb-go v0.14.3
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/lib/pq v1.10.9
