@@ -2,7 +2,9 @@ package databases
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
+	"syscall"
 	"time"
 
 	"github.com/avast/retry-go"
@@ -20,8 +22,8 @@ func Sql(driverName, mysqlURL string) (time.Duration, error) {
 
 	query := dsn.Query()
 
-	query.Set("connect_timeout", "3")
-	query.Set("timeout", "3")
+	query.Set("connect_timeout", "5")
+	query.Set("timeout", "5")
 
 	dsn.RawQuery = query.Encode()
 
@@ -38,8 +40,11 @@ func Sql(driverName, mysqlURL string) (time.Duration, error) {
 		return db.Ping()
 	},
 		retry.LastErrorOnly(true),
-		retry.Attempts(3),
+		retry.Attempts(300),
 		retry.Delay(10),
+		retry.RetryIf(func(err error) bool {
+			return errors.Is(err, syscall.ECONNREFUSED)
+		}),
 	); err != nil {
 		return time.Since(sT), fmt.Errorf("db.Ping error: %w", err)
 	}
