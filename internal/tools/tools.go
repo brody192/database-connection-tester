@@ -35,7 +35,7 @@ func GetURLsFromEnvironment(prefix string) ([]*url.URL, map[*url.URL]string, err
 	}
 
 	if len(urls) == 0 {
-		return nil, nil, fmt.Errorf("no urls in environment where found with given prefix")
+		return nil, nil, fmt.Errorf("no urls in environment where found with given prefix: %s", prefix)
 	}
 
 	return urls, urlToEnv, nil
