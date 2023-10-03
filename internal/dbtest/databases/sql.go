@@ -34,7 +34,7 @@ func Sql(driverName, mysqlURL string) (time.Duration, error) {
 
 	defer db.Close()
 
-	maxTestTime := time.Now().Add(5 * time.Second)
+	maxTestTime := time.Now().Add(8 * time.Second)
 
 	if err := retry.Do(func() error {
 		return db.Ping()
