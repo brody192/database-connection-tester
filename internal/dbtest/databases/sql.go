@@ -20,8 +20,8 @@ func Sql(driverName, mysqlURL string) (time.Duration, error) {
 
 	query := dsn.Query()
 
-	query.Set("connect_timeout", "3")
-	query.Set("timeout", "3")
+	query.Set("connect_timeout", "5")
+	query.Set("timeout", "5")
 
 	dsn.RawQuery = query.Encode()
 
