@@ -42,7 +42,7 @@ func Sql(driverName, mysqlURL string) (time.Duration, error) {
 		retry.LastErrorOnly(true),
 		retry.Attempts(300),
 		retry.Delay(10),
-		retry.RetryIf(func(err error) bool {
+		retry.RetryIf(func(_ error) bool {
 			return !time.Now().After(maxTestTime)
 		}),
 	); err != nil {
