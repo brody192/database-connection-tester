@@ -9,7 +9,7 @@ import (
 	"github.com/xo/dburl"
 
 	_ "github.com/go-sql-driver/mysql"
-	_ "github.com/lib/pq"
+	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
 func Sql(driverName, mysqlURL string) (time.Duration, error) {
@@ -24,6 +24,10 @@ func Sql(driverName, mysqlURL string) (time.Duration, error) {
 	query.Set("timeout", "5")
 
 	dsn.RawQuery = query.Encode()
+
+	if driverName == "postgres" {
+		driverName = "pgx"
+	}
 
 	sT := time.Now()
 
