@@ -11,10 +11,12 @@ import (
 )
 
 func main() {
-	if os.Getenv("SLEEP") == "true" {
-		fmt.Println("sleeping for 5 seconds")
+	sleepTime := 3 * time.Second
 
-		time.Sleep(5 * time.Second)
+	if os.Getenv("SLEEP") == "true" {
+		fmt.Printf("sleeping for %v\n", sleepTime)
+
+		time.Sleep(sleepTime)
 	}
 
 	dbs, dbmap, err := tools.GetURLsFromEnvironment("TEST_")

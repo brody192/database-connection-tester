@@ -1,11 +1,11 @@
 package databases
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"time"
 
-	"github.com/avast/retry-go"
 	"github.com/xo/dburl"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -20,8 +20,8 @@ func Sql(driverName, mysqlURL string) (time.Duration, error) {
 
 	query := dsn.Query()
 
-	query.Set("connect_timeout", "5")
-	query.Set("timeout", "5")
+	query.Set("connect_timeout", "1")
+	query.Set("timeout", "1")
 
 	dsn.RawQuery = query.Encode()
 
@@ -38,19 +38,32 @@ func Sql(driverName, mysqlURL string) (time.Duration, error) {
 
 	defer db.Close()
 
+	var lastErr error
+
 	maxTestTime := time.Now().Add(8 * time.Second)
 
-	if err := retry.Do(func() error {
-		return db.Ping()
-	},
-		retry.LastErrorOnly(true),
-		retry.Attempts(300),
-		retry.Delay(10),
-		retry.RetryIf(func(_ error) bool {
-			return !time.Now().After(maxTestTime)
-		}),
-	); err != nil {
-		return time.Since(sT), fmt.Errorf("db.Ping error: %w", err)
+	for range make([]struct{}, 10) {
+		if time.Now().After(maxTestTime) {
+			if lastErr == nil {
+				lastErr = context.DeadlineExceeded
+			}
+			break
+		}
+
+		ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+		defer cancel()
+
+		if err := db.PingContext(ctx); err != nil {
+			lastErr = err
+		} else {
+			break
+		}
+
+		time.Sleep(10 * time.Millisecond)
+	}
+
+	if lastErr != nil {
+		return time.Since(sT), fmt.Errorf("db.Ping error: %w", lastErr)
 	}
 
 	return time.Since(sT), nil

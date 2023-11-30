@@ -12,7 +12,6 @@ import (
 
 func Mongo(monoURL string) (time.Duration, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 8*time.Second)
-
 	defer cancel()
 
 	sT := time.Now()
