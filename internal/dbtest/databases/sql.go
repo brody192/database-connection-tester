@@ -42,7 +42,7 @@ func Sql(driverName, mysqlURL string) (time.Duration, error) {
 
 	maxTestTime := time.Now().Add(8 * time.Second)
 
-	for range make([]struct{}, 10) {
+	for range 10 {
 		if time.Now().After(maxTestTime) {
 			if lastErr == nil {
 				lastErr = context.DeadlineExceeded

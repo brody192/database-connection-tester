@@ -1,6 +1,6 @@
 module main
 
-go 1.21.4
+go 1.22
 
 require (
 	github.com/edgedb/edgedb-go v0.14.4
