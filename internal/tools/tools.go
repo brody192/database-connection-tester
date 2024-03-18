@@ -25,6 +25,10 @@ func GetURLsFromEnvironment(prefix string) ([]*url.URL, map[*url.URL]string, err
 		key := kv[0]
 		value := kv[1]
 
+		if strings.TrimSpace(value) == "" {
+			return nil, nil, fmt.Errorf("empty database url found for key %s", key)
+		}
+
 		urlParsed, err := url.Parse(value)
 		if err != nil {
 			return nil, nil, fmt.Errorf("key %s is not a valid URL: %s", key, value)
