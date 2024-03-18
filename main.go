@@ -5,6 +5,7 @@ import (
 	"main/internal/dbtest"
 	"main/internal/tools"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/olekukonko/tablewriter"
@@ -13,7 +14,7 @@ import (
 func main() {
 	sleepTime := 3 * time.Second
 
-	if os.Getenv("SLEEP") == "true" {
+	if b, _ := strconv.ParseBool(os.Getenv("SLEEP")); b {
 		fmt.Printf("sleeping for %v\n", sleepTime)
 
 		time.Sleep(sleepTime)

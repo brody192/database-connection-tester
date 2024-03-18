@@ -55,7 +55,7 @@ func RunTests(databaseURLs []*url.URL) ([]*testResults, time.Duration, error) {
 			}
 
 			switch dburl.Scheme {
-			case "postgres", "mysql":
+			case "postgres", "mysql", "libsql":
 				result.Duration, result.Err = databases.Sql(dburl.Scheme, dburl.String())
 			case "mariadb":
 				result.Duration, result.Err = databases.Sql("mysql", dburl.String())

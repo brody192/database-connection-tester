@@ -10,20 +10,28 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/jackc/pgx/v5/stdlib"
+	_ "github.com/tursodatabase/libsql-client-go/libsql"
 )
 
-func Sql(driverName, mysqlURL string) (time.Duration, error) {
-	dsn, err := dburl.Parse(mysqlURL)
-	if err != nil {
+func Sql(driverName, sqlURL string) (time.Duration, error) {
+	var dsn string
+
+	url, err := dburl.Parse(sqlURL)
+	if err != nil && err == dburl.ErrUnknownDatabaseScheme {
+		// if dburl doesn't recognize the database schema, use the url as-is anyway
+		dsn = sqlURL
+	} else if err != nil {
 		return 0, fmt.Errorf("dburl.Parse error: %w", err)
+	} else {
+		query := url.Query()
+
+		query.Set("connect_timeout", "1")
+		query.Set("timeout", "1")
+
+		url.RawQuery = query.Encode()
+
+		dsn = url.DSN
 	}
-
-	query := dsn.Query()
-
-	query.Set("connect_timeout", "1")
-	query.Set("timeout", "1")
-
-	dsn.RawQuery = query.Encode()
 
 	if driverName == "postgres" {
 		driverName = "pgx"
@@ -31,7 +39,7 @@ func Sql(driverName, mysqlURL string) (time.Duration, error) {
 
 	sT := time.Now()
 
-	db, err := sql.Open(driverName, dsn.DSN)
+	db, err := sql.Open(driverName, dsn)
 	if err != nil {
 		return time.Since(sT), fmt.Errorf("sql.Open error: %w", err)
 	}
@@ -53,7 +61,8 @@ func Sql(driverName, mysqlURL string) (time.Duration, error) {
 		ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 		defer cancel()
 
-		if err := db.PingContext(ctx); err != nil {
+		_, err := db.QueryContext(ctx, "SELECT 1")
+		if err != nil {
 			lastErr = err
 		} else {
 			break
