@@ -34,6 +34,10 @@ func GetURLsFromEnvironment(prefix string) ([]*url.URL, map[*url.URL]string, err
 			return nil, nil, fmt.Errorf("key %s is not a valid URL: %s", key, value)
 		}
 
+		if urlParsed.Scheme == "" {
+			return nil, nil, fmt.Errorf("url %s missing scheme", value)
+		}
+
 		urls = append(urls, urlParsed)
 		urlToEnv[urlParsed] = strings.SplitN(key, prefix, 2)[1]
 	}

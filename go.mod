@@ -3,12 +3,13 @@ module main
 go 1.22
 
 require (
+	github.com/bradfitz/gomemcache v0.0.0-20230905024940-24af94b03874
 	github.com/edgedb/edgedb-go v0.16.0
 	github.com/go-sql-driver/mysql v1.8.0
 	github.com/jackc/pgx/v5 v5.5.5
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/redis/go-redis/v9 v9.5.1
-	github.com/tursodatabase/libsql-client-go v0.0.0-20240318102539-e704ff5fd269
+	github.com/tursodatabase/libsql-client-go v0.0.0-20240319161759-27d97b27f9e1
 	github.com/xo/dburl v0.21.1
 	go.mongodb.org/mongo-driver v1.14.0
 )

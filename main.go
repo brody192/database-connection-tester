@@ -5,6 +5,7 @@ import (
 	"main/internal/dbtest"
 	"main/internal/tools"
 	"os"
+	"sort"
 	"strconv"
 	"time"
 
@@ -33,6 +34,10 @@ func main() {
 		fmt.Println(err)
 		os.Exit(0)
 	}
+
+	sort.SliceStable(results, func(i, j int) bool {
+		return results[i].Duration < results[j].Duration
+	})
 
 	table := tablewriter.NewWriter(os.Stdout)
 

@@ -24,21 +24,16 @@ func RunTests(databaseURLs []*url.URL) ([]*testResults, time.Duration, error) {
 	results := []*testResults{}
 
 	resultsChan := make(chan *testResults, len(databaseURLs))
-
 	defer close(resultsChan)
 
-	ack := make(chan struct{})
-
-	defer close(ack)
+	wg := sync.WaitGroup{}
 
 	go func() {
 		for result := range resultsChan {
 			results = append(results, result)
-			ack <- struct{}{}
+			wg.Done()
 		}
 	}()
-
-	wg := sync.WaitGroup{}
 
 	wg.Add(len(databaseURLs))
 
@@ -65,6 +60,8 @@ func RunTests(databaseURLs []*url.URL) ([]*testResults, time.Duration, error) {
 				result.Duration, result.Err = databases.Mongo(dburl.String())
 			case "edgedb":
 				result.Duration, result.Err = databases.EdgeDB(dburl.String())
+			case "memcache", "memcached":
+				result.Duration, result.Err = databases.Memcache(dburl.Host)
 			default:
 				result.Err = fmt.Errorf(`scheme "%s" not implemented`, dburl.Scheme)
 			}
@@ -76,7 +73,7 @@ func RunTests(databaseURLs []*url.URL) ([]*testResults, time.Duration, error) {
 			}
 
 			resultsChan <- &result
-			<-ack
+			wg.Add(1)
 		}(dburl)
 	}
 
