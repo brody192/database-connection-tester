@@ -8,6 +8,7 @@ import (
 
 	"github.com/xo/dburl"
 
+	_ "github.com/denisenkom/go-mssqldb"
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	_ "github.com/tursodatabase/libsql-client-go/libsql"
